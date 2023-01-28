@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 
 type PostList = {
   id: string;
@@ -22,24 +22,42 @@ export const Home = () => {
       //   console.log(data);
       //   console.log(data.docs);
       //   console.log(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setPostList(
+        data.docs.map((doc) => {
+          const docData: PostList = {
+            ...(doc.data() as Omit<PostList, 'id'>),
+            id: doc.id,
+          };
+          return docData;
+        })
+      );
     };
     getPosts();
   }, []);
 
+  const handleDelete = async (id: string) => {
+    await deleteDoc(doc(db, 'posts', id));
+    window.location.href = '/';
+  };
+
   return (
     <div css={styles.page}>
-      <div css={styles.contents}>
-        <div css={styles.header}>
-          <h1>タイトル</h1>
-        </div>
-        <div css={styles.textContainer}>
-          今はReactの学習中です。これから頑張ってReactエンジニアとして活躍していきたいと思っています。よろしくおねがいします。fffffffffffffffffffffffffffffffffffffffffffffgfffdfadfafdadfkj;jkj;ljkl;j;j;jklj;ljk;lj;lkj;lkjsdfdafdfadfadfad
-        </div>
-        <div css={styles.nameAndDeleteButton}>
-          <h3>@satoshi</h3>
-          <button>削除</button>
-        </div>
-      </div>
+      {postList.map((post) => {
+        return (
+          <div css={styles.contents}>
+            <div css={styles.header}>
+              <h1>{post.title}</h1>
+            </div>
+            <div css={styles.textContainer}>{post.postText}</div>
+            <div css={styles.nameAndDeleteButton}>
+              <h3>@{post.author.username}</h3>
+              {post.author.id === auth.currentUser?.uid && (
+                <button onClick={() => handleDelete(post.id)}>削除</button>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

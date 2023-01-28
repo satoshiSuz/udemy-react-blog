@@ -1,10 +1,15 @@
 import { css } from '@emotion/react';
 import { addDoc, collection } from 'firebase/firestore';
+import { FC, useEffect } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 
-export const CreatePost = () => {
+type Props = {
+  isAuth: boolean;
+};
+
+export const CreatePost: FC<Props> = ({ isAuth }) => {
   const [title, setTitle] = useState<string>();
   const [postText, setPostText] = useState<string>();
 
@@ -22,6 +27,11 @@ export const CreatePost = () => {
     navigate('/');
   };
 
+  useEffect(() => {
+    if (!isAuth) {
+      navigate('/login');
+    }
+  }, []);
   return (
     <div css={styles.createPost}>
       <div css={styles.container}>

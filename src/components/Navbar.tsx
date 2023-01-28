@@ -20,20 +20,22 @@ export const Navbar: FC<Props> = ({ isAuth }) => {
         <FontAwesomeIcon icon={faHouse} css={styles.icon} />
         ホーム
       </Link>
-      <Link to='/createpost' css={styles.link}>
-        <FontAwesomeIcon icon={faFilePen} css={styles.icon} />
-        記事投稿
-      </Link>
       {!isAuth ? (
         <Link to='/login' css={styles.link}>
           <FontAwesomeIcon icon={faArrowRightToBracket} css={styles.icon} />
           ログイン
         </Link>
       ) : (
-        <Link to='/logout'>
-          <FontAwesomeIcon icon={faArrowRightToBracket} />
-          ログアウト
-        </Link>
+        <>
+          <Link to='/createpost' css={styles.link}>
+            <FontAwesomeIcon icon={faFilePen} css={styles.icon} />
+            記事投稿
+          </Link>
+          <Link to='/logout'>
+            <FontAwesomeIcon icon={faArrowRightToBracket} />
+            ログアウト
+          </Link>
+        </>
       )}
     </nav>
   );
